@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: Postgres-page
+    ports:
+      - "5042:5432"
+    environment:
+      POSTGRES_DB: login
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    container_name: Backend-page
+    build: ./Backend
+    ports:
+      - "3075:3075"
+    depends_on:
+      - postgres
+    environment:
+      DB_USER: postgres
+      DB_PASSWORD: admin123
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: login
+      JWT_SECRET: your_jwt_secret_key
+      PORT: 3075
+    volumes:
+      - ./Backend:/app
+    restart: always
+
+  dashboard:
+    container_name: Dashboard-page
+    build: ./Dashboard
+    ports:
+      - "9018:80"
+    depends_on:
+      - backend
+
+  forgot_password:
+    container_name: Forgot_password-page
+    build: ./Forgot_password
+    ports:
+      - "9019:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./Forgot_password:/usr/share/nginx/html
+
+  login:
+    container_name: Login-page
+    build: ./Login
+    ports:
+      - "9020:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./Login:/usr/share/nginx/html
+
+  sign:
+    container_name: Sign-page
+    build: ./Sign
+    ports:
+      - "9021:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./Sign:/usr/share/nginx/html
+
+volumes:
+  pgdata:
+
