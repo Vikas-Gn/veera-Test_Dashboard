@@ -25,10 +25,10 @@ const pool = new Pool({
 const allowedOrigins = [
   'http://127.0.0.1:5500',
   'http://43.205.233.182:3075',
-  'http://43.205.233.182:9018',
-  'http://43.205.233.182:9019',
+  'http://43.205.233.182:9018', // ✅ Add the Login frontend origin
+  'http://43.205.233.182:9019', // ✅ Optionally, add Dashboard or others too
   'http://43.205.233.182:9020',
-  'http://43.205.233.182:9021',
+  'http://43.205.233.182:9021'
 ];
 
 app.use(cors({
@@ -36,7 +36,7 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed for origin: ' + origin));
+      callback(new Error('CORS not allowed from this origin: ' + origin));
     }
   },
   credentials: true,
