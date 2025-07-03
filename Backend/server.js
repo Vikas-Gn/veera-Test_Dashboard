@@ -32,12 +32,19 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: 'http://127.0.0.1:5500', // or your exact frontend origin
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed for origin: ' + origin));
+    }
+  },
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   exposedHeaders: ['set-cookie']
 }));
+
 app.use((req, res, next) => {
   console.log('Incoming request:', req.method, req.url);
   console.log('Headers:', req.headers);
